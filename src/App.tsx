@@ -1,5 +1,7 @@
 import React from 'react';
 import { Route, Router } from 'react-router-dom';
+import AuthLoader from './pages/auth/AuthLoader';
+import LoginRegister from './pages/auth/LoginRegister';
 import Movies from './pages/movies/Movies';
 
 interface AppProps {
@@ -10,7 +12,9 @@ const App: React.FunctionComponent<AppProps> = ({ history }) => {
   return (
     <div>
       <Router history={history}>
-        <Route exact path="/" component={Movies} />
+        <AuthLoader />
+        <Route exact path="/" component={LoginRegister} />
+        <Route exact path="/movies" component={Movies} />
       </Router>
     </div>
   )

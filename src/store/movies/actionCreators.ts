@@ -21,6 +21,13 @@ export function enterMovie(data: CreateMovieModel): constants.movieActionTypes {
     }
 }
 
+export function enterMovieSuccess(data: {message: string, ok: boolean}): constants.movieActionTypes {
+    return {
+        type: constants.ENTER_MOVIE_SUCCESS,
+        payload: data
+    }
+}
+
 export function getRandomMovie(num: number): constants.movieActionTypes {
     return {
         type: constants.GET_RANDOM_MOVIE,
@@ -32,5 +39,11 @@ export function getRandomMovieSuccess(data: RandomMovieModel[]): constants.movie
     return {
         type: constants.GET_RANDOM_MOVIE_SUCCESS,
         payload: data
+    }
+}
+
+export function resetMessage(): constants.movieActionTypes {
+    return {
+        type: constants.RESET_MESSAGE
     }
 }

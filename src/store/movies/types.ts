@@ -1,6 +1,10 @@
+import { ErrorModel } from "../auth/types";
+
 export interface MoviesState {
     genres: string[];
     selectedMovies: RandomMovieModel[];
+    error: ErrorModel,
+    surfaceMessage: string | null
 }
 
 export interface CreateMovieModel {

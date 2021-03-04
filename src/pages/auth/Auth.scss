@@ -1,0 +1,51 @@
+.login-link {
+    cursor: pointer;
+}
+
+@media screen and (max-width: 650px) {
+    .manage-content {
+        flex-direction: column;
+    }
+    .logout-content {
+        display: none;
+    }
+    .horizontal-menu {
+        display: none !important;
+    }
+}
+
+.admin-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+
+    .button-container {
+        align-items: center;
+    }
+}
+
+.empty {
+    text-align: center;
+}
+
+.logout-button {
+    margin: 4px !important;
+}
+
+.button-container {
+    display: flex;
+    .submit-button {
+        margin-right: 30px;
+    }
+}
+
+.logout-content {
+    display: flex;
+    flex-grow: 1;
+}
+
+.tourney-form {
+    width: 400px;
+    max-width: 98vw;
+}

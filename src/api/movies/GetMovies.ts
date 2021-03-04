@@ -34,7 +34,7 @@ export const fetchGenres = async () => {
     }
 }
 
-export const postMovie = async (title: string, genre: string) => {
+export const postMovie = async (title: string, genre: string, userId: number) => {
     try {
         const response = await fetch(`${apiConfig}/v1/movies`, {
             method: 'POST',
@@ -42,7 +42,7 @@ export const postMovie = async (title: string, genre: string) => {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({title: title, genre: genre})
+            body: JSON.stringify({title: title, genre: genre, userId: userId})
         });
         const returnData = await response.json();
         if (response.ok) {

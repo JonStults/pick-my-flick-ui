@@ -1,7 +1,10 @@
-import { call, put, takeEvery, all } from 'redux-saga/effects';
+import { call, put, takeEvery, all, select } from 'redux-saga/effects';
 import { fetchGenres, fetchMovies, fetchRandomMovie, postMovie } from '../../api/movies/GetMovies';
-import { getMoviesSuccess, getRandomMovieSuccess } from './actionCreators';
+import { RootState } from '../rootState';
+import { enterMovieSuccess, getMoviesSuccess, getRandomMovieSuccess } from './actionCreators';
 import { ENTER_MOVIE, GET_MOVIES, GET_RANDOM_MOVIE } from './constants';
+
+const selectUserId = (state: RootState) => state.AuthState.user.id;
 
 export function* getMoviesSaga() {
     try {
@@ -15,7 +18,9 @@ export function* getMoviesSaga() {
 
 export function* enterMovieSaga(action: any) {
     try {
-        yield call(postMovie, action.payload.title, action.payload.genre);
+        const userId = yield select(selectUserId);
+        const response = yield call(postMovie, action.payload.title, action.payload.genre, userId);
+        if (!response.isError) yield put(enterMovieSuccess({message: response.message, ok: response.ok}))
     } catch (e) {
         console.log(e)
     }

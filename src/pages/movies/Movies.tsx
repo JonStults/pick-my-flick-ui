@@ -1,15 +1,17 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { Form, Dropdown, Input, Button } from 'semantic-ui-react';
+import { Form, Dropdown, Input, Button, Modal } from 'semantic-ui-react';
 import { bindActionCreators } from 'redux';
-import { getMovies, enterMovie, getRandomMovie } from '../../store/movies/actionCreators';
+import { getMovies, enterMovie, getRandomMovie, resetMessage } from '../../store/movies/actionCreators';
 import { RootState } from '../../store/rootState';
 import { CreateMovieModel, RandomMovieModel } from '../../store/movies/types';
 
 interface MoviesProps {
     genres: string[];
     selectedMovies: RandomMovieModel[];
+    surfaceMessage: string;
     getMovies: () => void;
+    resetMessage: () => void;
     getRandomMovie: (num: number) => void;
     enterMovie: (data: CreateMovieModel) => void;
 }
@@ -33,7 +35,7 @@ class Movies extends React.Component<MoviesProps, MoviesState> {
         this.props.getMovies();
     }
     render() {
-        const { genres, selectedMovies } = this.props;
+        const { genres, selectedMovies, surfaceMessage } = this.props;
         const { title, genre, randomCount } = this.state;
         return (
             <div>
@@ -56,10 +58,11 @@ class Movies extends React.Component<MoviesProps, MoviesState> {
                             </Dropdown>
                         </Form.Field>
                     </div>
-                    <Button type="submit" basic onClick={() => this.props.enterMovie({ title: title, genre: genre })}>Submit Movie</Button>
+                    <Button disabled={title.trim() === '' || genre === ''} type="submit" basic onClick={() => this.props.enterMovie({ title: title, genre: genre })}>Submit Movie</Button>
+                    {/* {surfaceMessage && surfaceMessage} */}
                 </Form>
                 <div className="flex-row">
-                    <Button onClick={() => this.props.getRandomMovie(randomCount)} type="button" basic>Get Random Movie</Button>
+                    <Button onClick={() => this.props.getRandomMovie(randomCount)} type="button" basic>Get Random {randomCount === 1 ? 'Movie' : 'Movies'}</Button>
                     <Dropdown trigger={randomCount} placeholder="Select Count">
                         <Dropdown.Menu>
                             <Dropdown.Item onClick={() => this.setState({ randomCount: 1 })}>1</Dropdown.Item>
@@ -79,6 +82,10 @@ class Movies extends React.Component<MoviesProps, MoviesState> {
                         })
                     }
                 </div>
+                <Modal closeOnDimmerClick={true} onClose={this.props.resetMessage} open={surfaceMessage !== null}>
+                    {surfaceMessage}
+                    <Button onClick={this.props.resetMessage}>No</Button>
+                </Modal>
             </div>
         )
     }
@@ -87,13 +94,14 @@ class Movies extends React.Component<MoviesProps, MoviesState> {
 const mapStateToProps = (state: RootState) => {
     return {
         genres: state.MoviesState.genres,
-        selectedMovies: state.MoviesState.selectedMovies
+        selectedMovies: state.MoviesState.selectedMovies,
+        surfaceMessage: state.MoviesState.surfaceMessage
     }
 }
 
 const mapDispatchToProps = (dispatch: any) => {
     return bindActionCreators({
-        getMovies, enterMovie, getRandomMovie
+        getMovies, enterMovie, getRandomMovie, resetMessage
     }, dispatch)
 }
 
