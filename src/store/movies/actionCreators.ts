@@ -1,5 +1,6 @@
+import { ErrorModel } from '../auth/types';
 import * as constants from './constants';
-import { CreateMovieModel, MoviesResponseModel, RandomMovieModel } from './types';
+import { CreateMovieModel, MovieMetaData, MoviesResponseModel, RandomMovieModel } from './types';
 
 export function getMovies(): constants.movieActionTypes {
     return {
@@ -21,7 +22,7 @@ export function enterMovie(data: CreateMovieModel): constants.movieActionTypes {
     }
 }
 
-export function enterMovieSuccess(data: {message: string, ok: boolean}): constants.movieActionTypes {
+export function enterMovieSuccess(data: {message: string, ok: boolean, metaData: MovieMetaData | null}): constants.movieActionTypes {
     return {
         type: constants.ENTER_MOVIE_SUCCESS,
         payload: data
@@ -42,8 +43,25 @@ export function getRandomMovieSuccess(data: RandomMovieModel[]): constants.movie
     }
 }
 
+export function getRandomMovieError(data: ErrorModel): constants.movieActionTypes {
+    return {
+        type: constants.GET_RANDOM_MOVIE_ERROR,
+        payload: data
+    }
+}
+
 export function resetMessage(): constants.movieActionTypes {
     return {
         type: constants.RESET_MESSAGE
+    }
+}
+
+export function createUserFlick(userId: number, movieId: number): constants.movieActionTypes {
+    return {
+        type: constants.CREATE_USER_FLICK,
+        payload: {
+            userId: userId,
+            movieId: movieId
+        }
     }
 }

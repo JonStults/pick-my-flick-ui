@@ -7,7 +7,8 @@ const initialState: MoviesState = {
     genres: [],
     selectedMovies: [],
     error: {} as ErrorModel,
-    surfaceMessage: null
+    surfaceMessage: null,
+    metaData: null
 }
 
 export function moviesReducer(state = initialState, action: movieActionTypes): MoviesState {
@@ -15,7 +16,8 @@ export function moviesReducer(state = initialState, action: movieActionTypes): M
         case constants.ENTER_MOVIE_SUCCESS:
             return {
                 ...state,
-                surfaceMessage: action.payload.ok ? state.surfaceMessage : action.payload.message
+                surfaceMessage: action.payload.ok ? state.surfaceMessage : action.payload.message,
+                metaData: action.payload.ok ? state.metaData : action.payload.metaData
             };
         case constants.GET_MOVIES_SUCCESS:
             return {
@@ -27,10 +29,16 @@ export function moviesReducer(state = initialState, action: movieActionTypes): M
                 ...state,
                 selectedMovies: action.payload
             };
+        case constants.GET_RANDOM_MOVIE_ERROR:
+            return {
+                ...state,
+                error: action.payload
+            };
         case constants.RESET_MESSAGE:
             return {
                 ...state,
-                surfaceMessage: null
+                surfaceMessage: null,
+                metaData: null
             };
         default: return state;
     }

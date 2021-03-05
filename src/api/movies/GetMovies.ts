@@ -58,9 +58,34 @@ export const postMovie = async (title: string, genre: string, userId: number) =>
     }
 }
 
-export const fetchRandomMovie = async (num: number) => {
+export const fetchRandomMovie = async (num: number, userId: number) => {
     try {
-        const response = await fetch(`${apiConfig}/v1/random?number=${num}`);
+        const response = await fetch(`${apiConfig}/v1/random?number=${num}&userId=${userId}`);
+        const returnData = await response.json();
+        if (response.ok) {
+            return returnData;
+        }
+        return {
+            isError: true,
+            message: returnData.detail
+        }
+    } catch (e) {
+        return {
+            isError: true
+        }
+    }
+}
+
+export const postUserFlick = async (userId: number, movieId: number) => {
+    try {
+        const response = await fetch(`${apiConfig}/v1/userFlick`, {
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({userId: userId, movieId: movieId})
+        });
         const returnData = await response.json();
         if (response.ok) {
             return returnData;
