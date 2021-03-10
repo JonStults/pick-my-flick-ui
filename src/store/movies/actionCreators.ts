@@ -65,3 +65,9 @@ export function createUserFlick(userId: number, movieId: number): constants.movi
         }
     }
 }
+
+export function resetSelected(): constants.movieActionTypes {
+    return {
+        type: constants.RESET_SELECTED
+    }
+}

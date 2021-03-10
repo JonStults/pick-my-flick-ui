@@ -1,10 +1,11 @@
 import React from 'react';
 import { connect } from 'react-redux';
+import classNames from 'classnames';
 import { Form, Dropdown, Input, Button, Modal } from 'semantic-ui-react';
 import { bindActionCreators } from 'redux';
 import {
     getMovies, enterMovie, createUserFlick,
-    getRandomMovie, resetMessage
+    getRandomMovie, resetMessage, resetSelected
 } from '../../store/movies/actionCreators';
 import { RootState } from '../../store/rootState';
 import { CreateMovieModel, MovieMetaData, RandomMovieModel } from '../../store/movies/types';
@@ -19,6 +20,7 @@ interface MoviesProps {
     userId: number;
     getMovies: () => void;
     resetMessage: () => void;
+    resetSelected: () => void;
     createUserFlick: (userId: number, movieId: number) => void;
     getRandomMovie: (num: number) => void;
     enterMovie: (data: CreateMovieModel) => void;
@@ -27,7 +29,10 @@ interface MoviesProps {
 interface MoviesState {
     title: string,
     genre: string,
-    randomCount: number
+    randomCount: number;
+    openModal: number;
+    closedModals: number[];
+    timeout: any;
 }
 
 class Movies extends React.Component<MoviesProps, MoviesState> {
@@ -36,7 +41,10 @@ class Movies extends React.Component<MoviesProps, MoviesState> {
         this.state = {
             title: '',
             genre: '',
-            randomCount: 1
+            randomCount: 1,
+            openModal: 0,
+            closedModals: [],
+            timeout: 0
         }
     }
     componentDidMount() {
@@ -52,7 +60,7 @@ class Movies extends React.Component<MoviesProps, MoviesState> {
     }
     render() {
         const { genres, selectedMovies, surfaceMessage, userId, metaData } = this.props;
-        const { title, genre, randomCount } = this.state;
+        const { title, genre, randomCount, openModal, closedModals } = this.state;
         return (
             <div className="flex-column home-container">
                 <Form className="submit-movie-form">
@@ -77,32 +85,48 @@ class Movies extends React.Component<MoviesProps, MoviesState> {
                     <Button disabled={title.trim() === '' || genre === ''} type="submit" basic onClick={() => { this.props.enterMovie({ title: title, genre: genre }); this.setState({ title: '', genre: '' }) }}>Submit Movie</Button>
                 </Form>
                 <div className="flex-row random-movie">
-                    <Button onClick={() => this.props.getRandomMovie(randomCount)} type="button" basic>Get Random {randomCount === 1 ? 'Movie' : 'Movies'}</Button>
-                    <Dropdown trigger={randomCount} placeholder="Select Count">
-                        <Dropdown.Menu>
-                            <Dropdown.Item onClick={() => this.setState({ randomCount: 1 })}>1</Dropdown.Item>
-                            <Dropdown.Item onClick={() => this.setState({ randomCount: 3 })}>3</Dropdown.Item>
-                            <Dropdown.Item onClick={() => this.setState({ randomCount: 5 })}>5</Dropdown.Item>
-                        </Dropdown.Menu>
-                    </Dropdown>
+                    <Button onClick={() => { this.setState({ openModal: 1 }) }} type="button" basic>Get Random {randomCount === 1 ? 'Movie' : 'Movies'}</Button>
                 </div>
                 <Modal closeOnDimmerClick={true} onClose={this.props.resetMessage} open={surfaceMessage !== null}>
                     {surfaceMessage}
                     <Button onClick={this.props.resetMessage}>No</Button>
                     <Button onClick={() => this.props.createUserFlick(userId, metaData ? metaData.movieId : -1)}>Yes</Button>
                 </Modal>
-                {
-                    selectedMovies.length > 0 &&
-                    <div className="flex-column messenger-container">
-                        {
-                            selectedMovies.map((s: RandomMovieModel, index: number) => {
-                                return (
-                                    <div className="messenger" id={`messenger-${index}`}></div>
-                                )
-                            })
-                        }
-                    </div>
-                }
+                <div style={{ opacity: openModal === 0 ? 0 : 1 }} className={classNames("modal-animation modal-1 flex-column", {
+                    'move-center': openModal === 1,
+                    'move-left': closedModals.includes(1)
+                })}>
+                    How many?
+                    <Button onClick={() => this.setState({ randomCount: 1, openModal: 2, closedModals: [...closedModals, 1] })}>1</Button>
+                    <Button onClick={() => this.setState({ randomCount: 3, openModal: 2, closedModals: [...closedModals, 1] })}>3</Button>
+                    <Button onClick={() => this.setState({ randomCount: 5, openModal: 2, closedModals: [...closedModals, 1] })}>5</Button>
+                </div>
+                <div style={{ opacity: openModal === 0 ? 0 : 1 }} onClick={() => this.setState({ openModal: 3, closedModals: [...closedModals, 2] })} className={classNames("modal-animation modal-2 flex-column", {
+                    'move-center': openModal === 2,
+                    'move-left': closedModals.includes(2)
+                })}>
+                    <Button onClick={() => this.props.getRandomMovie(randomCount)}>Get</Button>
+                </div>
+                <div style={{ opacity: openModal === 0 ? 0 : 1 }}
+                    className={classNames("modal-animation modal-3 messenger-container flex-column", {
+                        'move-center': openModal === 3,
+                        'move-left': closedModals.includes(3)
+                    })}>
+                    {
+                        selectedMovies.map((s: RandomMovieModel, index: number) => {
+                            return (
+                                <div key={s.title} className="messenger" id={`messenger-${index}`}></div>
+                            )
+                        })
+                    }
+                    <Button onClick={() => {
+                        this.props.resetSelected(); this.setState({
+                            openModal: 0, closedModals: [...closedModals, 3],
+                            timeout: setTimeout(() => { this.setState({ closedModals: [] }) }, 500)
+                        });
+                    }}>close</Button>
+                    <Button onClick={() => this.props.getRandomMovie(randomCount)}>select another</Button>
+                </div>
             </div>
         )
     }
@@ -120,7 +144,7 @@ const mapStateToProps = (state: RootState) => {
 
 const mapDispatchToProps = (dispatch: any) => {
     return bindActionCreators({
-        getMovies, enterMovie, getRandomMovie, resetMessage, createUserFlick
+        getMovies, enterMovie, getRandomMovie, resetMessage, createUserFlick, resetSelected
     }, dispatch)
 }
 

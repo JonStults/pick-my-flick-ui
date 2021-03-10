@@ -12,7 +12,7 @@ export class Messenger {
     this.fadeBuffer = false;
     this.messages = messages;
     this.id = id;
-    setTimeout(this.animateIn, 100);
+    setTimeout(this.animateIn, 300);
   }
 
 
@@ -45,6 +45,7 @@ export class Messenger {
     if (this.fadeBuffer === false) {
       this.fadeBuffer = [];
       for (var i = 0; i < this.messages[this.message].length; i++) {
+        // change this multiplier to make scramble longer
         this.fadeBuffer.push({ c: (Math.floor(Math.random() * 12)) + 1, l: this.messages[this.message].charAt(i) });
       }
     }

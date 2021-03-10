@@ -10,6 +10,7 @@ export const GET_RANDOM_MOVIE_SUCCESS = 'GET_RANDOM_MOVIE_SUCCESS';
 export const GET_RANDOM_MOVIE_ERROR = 'GET_RANDOM_MOVIE_ERROR';
 export const RESET_MESSAGE = 'RESET_MESSAGE';
 export const CREATE_USER_FLICK = 'CREATE_USER_FLICK';
+export const RESET_SELECTED = 'RESET_SELECTED';
 
 interface GetMovies {
     type: typeof GET_MOVIES
@@ -61,6 +62,10 @@ interface CreateUserFlick {
     }
 }
 
+interface ResetSelected {
+    type: typeof RESET_SELECTED
+}
+
 export type movieActionTypes = GetMovies
     | GetMoviesSuccess
     | GetRandomMovie
@@ -69,4 +74,5 @@ export type movieActionTypes = GetMovies
     | EnterMovie
     | EnterMovieSuccess
     | CreateUserFlick
+    | ResetSelected
     | ResetMessage;

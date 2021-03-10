@@ -63,9 +63,55 @@
     padding-top: 8px;
     margin-top: 16px;
     border-radius: 3px;
-    background: rgba(34, 34, 34, 0.85);
+    background: rgba(34, 34, 34, 0.85) !important;
     color: #f0f0f0;
     align-items: center;
     justify-content: center;
     min-width: 290px;
+}
+
+.modal-animation {
+    height: 200px;
+    width: 200px;
+    position: absolute;
+    top: calc(50vh - 100px);
+    left: 100%;
+    -webkit-transition: 500ms ease-in-out;
+    -moz-transition: 500ms ease-in-out;
+    -o-transition: 500ms ease-in-out;
+    transition: 500ms ease-in-out;
+    background: -moz-linear-gradient(#ffffff, #e3e3e3);
+    background: -webkit-linear-gradient(#ffffff, #e3e3e3);
+    background: -o-linear-gradient(#ffffff, #e3e3e3);
+    background: linear-gradient(#ffffff, #e3e3e3);
+    box-shadow: 0px 3px 15px rgba(0, 0, 0, 0.2);
+
+    border-radius: 15px;
+}
+
+.modal-1 {
+    &.move-center {
+        transform: translateX(calc(-50vw - 100px));
+    }
+    &.move-left {
+        transform: translateX(calc(-100vw - 300px));
+    }
+}
+
+.modal-2 {
+    &.move-center {
+        transform: translateX(calc(-50vw - 100px));
+    }
+    &.move-left {
+        transform: translateX(calc(-100vw - 300px));
+    }
+}
+
+.modal-3 {
+    &.move-center {
+        transform: translateX(calc(-50vw - 100px));
+    }
+    &.move-left {
+        transform: translateX(calc(-100vw - 300px));
+    }
 }

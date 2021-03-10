@@ -40,6 +40,11 @@ export function moviesReducer(state = initialState, action: movieActionTypes): M
                 surfaceMessage: null,
                 metaData: null
             };
+        case constants.RESET_SELECTED:
+            return {
+                ...state,
+                selectedMovies: []
+            };
         default: return state;
     }
 }
