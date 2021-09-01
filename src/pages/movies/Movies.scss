@@ -1,13 +1,38 @@
+.submit-movie-form {
+    height: 80%;
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    width: 100%;
+    .field {
+        width: 100%;
+        .dropdown {
+            width: 100%;
+            border: 1px solid silver;
+            border-radius: 3px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 8px;
+            i {
+                border: none;
+            }
+            .menu {
+                width: 100%;
+            }
+        }
+    }
+    button {
+        border: 1px solid lightgray;
+        width: 100%;
+    }
+}
 .home-container {
     height: 100vh;
     align-items: center;
     padding-top: 33vh;
-    .submit-movie-form {
-        button {
-            border: 1px solid lightgray;
-            width: 100%;
-        }
-    }
     .field {
         height: 38px;
         .dropdown {
@@ -35,6 +60,7 @@
 
     .genre-dropdown {
         border-radius: 0 3px 3px 0;
+        width: 100%;
     }
 
     .add-movie-input {
@@ -113,5 +139,37 @@
     }
     &.move-left {
         transform: translateX(calc(-100vw - 300px));
+    }
+}
+
+.enter-movie-modal {
+    height: 33vh !important;
+    width: 33vh !important;
+}
+
+.modal-content {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    padding: 8px;
+    height: 100%;
+    .close-icon {
+        position: absolute;
+        top: 8px;
+        right: 8px;
+        cursor: pointer;
+    }
+}
+
+.form-content {
+    width: 100%;
+}
+
+.form-content-two {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    button {
+        margin: 4px 0 !important;
     }
 }

@@ -11,3 +11,14 @@ export const DEFAULT_USER_INFO = {
     exp: 0,
     isAuthenticated: null
   }
+
+export const GENRES = [
+    'Action',
+    'Comedy',
+    'Drama',
+    'Fantasy',
+    'Horror',
+    'Mystery',
+    'Romance',
+    'Thriller'
+]
