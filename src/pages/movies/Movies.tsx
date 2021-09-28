@@ -165,7 +165,6 @@ class Movies extends React.Component<MoviesProps, MoviesState> {
                                         <Dropdown
                                             placeholder="Search Movie"
                                             fluid
-                                            onBlur={this.removeEventListener}
                                             onChange={this.handleClick}
                                             search className="search-dropdown"
                                             onSearchChange={(e: any) => this.handleTimeout(e.target.value)}
