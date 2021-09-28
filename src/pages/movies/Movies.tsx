@@ -72,10 +72,18 @@ class Movies extends React.Component<MoviesProps, MoviesState> {
 
     componentDidMount() {
         const { authenticated } = this.props;
+        const { refSet } = this.state;
         if (!authenticated || !localStorage.getItem(TOKEN)) {
             this.setState({isAuthenticated: false})
+        } else {
+            this.props.getMovies();
         }
-        this.props.getMovies();
+        let dropdown = document.getElementsByClassName('search-dropdown')[0];
+        if (dropdown && !refSet) {
+            let menu = dropdown.children[3];
+            menu.addEventListener('scroll', this.handleScroll);
+            this.setState({ refSet: true });
+        }
     }
 
     componentWillUnmount() {
@@ -85,16 +93,6 @@ class Movies extends React.Component<MoviesProps, MoviesState> {
     logout = () => {
         this.removeEventListener();
         this.props.logout();
-    }
-
-    addEventListener = () => {
-        const { refSet } = this.state;
-        let dropdown = document.getElementsByClassName('search-dropdown')[0];
-        if (dropdown && !refSet) {
-            let menu = dropdown.children[3];
-            menu.addEventListener('scroll', this.handleScroll);
-            this.setState({ refSet: true });
-        }
     }
 
     removeEventListener = () => {
@@ -168,7 +166,6 @@ class Movies extends React.Component<MoviesProps, MoviesState> {
                                             placeholder="Search Movie"
                                             fluid
                                             onBlur={this.removeEventListener}
-                                            onClick={this.addEventListener}
                                             onChange={this.handleClick}
                                             search className="search-dropdown"
                                             onSearchChange={(e: any) => this.handleTimeout(e.target.value)}
