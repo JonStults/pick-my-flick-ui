@@ -1,6 +1,6 @@
 import { ErrorModel } from '../auth/types';
 import * as constants from './constants';
-import { CreateMovieModel, MovieMetaData, MoviesResponseModel, RandomMovieModel } from './types';
+import { MoviesResponseModel, RandomMovieModel, SearchResponse, SearchResults } from './types';
 
 export function getMovies(): constants.movieActionTypes {
     return {
@@ -15,14 +15,14 @@ export function getMoviesSuccess(data: MoviesResponseModel): constants.movieActi
     }
 }
 
-export function enterMovie(data: CreateMovieModel): constants.movieActionTypes {
+export function enterMovie(data: SearchResults): constants.movieActionTypes {
     return {
         type: constants.ENTER_MOVIE,
         payload: data
     }
 }
 
-export function enterMovieSuccess(data: {message: string, ok: boolean, metaData: MovieMetaData | null}): constants.movieActionTypes {
+export function enterMovieSuccess(data: SearchResponse): constants.movieActionTypes {
     return {
         type: constants.ENTER_MOVIE_SUCCESS,
         payload: data
@@ -69,5 +69,48 @@ export function createUserFlick(userId: number, movieId: number): constants.movi
 export function resetSelected(): constants.movieActionTypes {
     return {
         type: constants.RESET_SELECTED
+    }
+}
+
+export function resetSearch(): constants.movieActionTypes {
+    return {
+        type: constants.RESET_SEARCH
+    }
+}
+
+export function searchMovies(title: string, page: number): constants.movieActionTypes {
+    return {
+        type: constants.SEARCH_MOVIES,
+        payload: {
+            title: title,
+            page: page
+        }
+    }
+}
+
+export function searchMoviesSuccess(data: SearchResponse): constants.movieActionTypes {
+    return {
+        type: constants.SEARCH_MOVIES_SUCCESS,
+        payload: data
+    }
+}
+
+export function updateMovieWatched(movieId: number, watched: boolean): constants.movieActionTypes {
+    return {
+        type: constants.UPDATE_MOVIE_WATCHED,
+        payload: {
+            movieId: movieId,
+            watched: watched
+        }
+    }
+}
+
+export function updateMovieWatchedSuccess(movieId: number, watched: boolean): constants.movieActionTypes {
+    return {
+        type: constants.UPDATE_MOVIE_WATCHED_SUCCESS,
+        payload: {
+            movieId: movieId,
+            watched: watched
+        }
     }
 }

@@ -1,4 +1,5 @@
 import { apiConfig } from '../../app.config';
+import { SearchResults } from '../../store/movies/types';
 
 export const fetchMovies = async () => {
     try {
@@ -34,7 +35,7 @@ export const fetchGenres = async () => {
     }
 }
 
-export const postMovie = async (title: string, genre: string, userId: number) => {
+export const postMovie = async (data: SearchResults, userId: number) => {
     try {
         const response = await fetch(`${apiConfig}/v1/movies`, {
             method: 'POST',
@@ -42,7 +43,7 @@ export const postMovie = async (title: string, genre: string, userId: number) =>
                 'Accept': 'application/json',
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({title: title, genre: genre, userId: userId})
+            body: JSON.stringify({data: data, userId: userId})
         });
         const returnData = await response.json();
         if (response.ok) {

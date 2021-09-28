@@ -22,3 +22,5 @@ export const GENRES = [
     'Romance',
     'Thriller'
 ]
+
+export const POSTER_PATH_URL = 'https://image.tmdb.org/t/p/original';

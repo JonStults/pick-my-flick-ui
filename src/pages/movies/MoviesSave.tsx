@@ -8,7 +8,7 @@ import {
     getRandomMovie, resetMessage, resetSelected
 } from '../../store/movies/actionCreators';
 import { RootState } from '../../store/rootState';
-import { CreateMovieModel, MovieMetaData, RandomMovieModel } from '../../store/movies/types';
+import { MovieMetaData, RandomMovieModel, SearchResults } from '../../store/movies/types';
 import { Messenger } from './Messenger';
 import './Movies.scss';
 
@@ -23,7 +23,7 @@ interface MoviesProps {
     resetSelected: () => void;
     createUserFlick: (userId: number, movieId: number) => void;
     getRandomMovie: (num: number) => void;
-    enterMovie: (data: CreateMovieModel) => void;
+    enterMovie: (data: SearchResults) => void;
 }
 
 interface MoviesState {
@@ -54,7 +54,7 @@ class Movies extends React.Component<MoviesProps, MoviesState> {
         const { selectedMovies } = this.props;
         if (prevProps.selectedMovies !== selectedMovies) {
             selectedMovies.forEach((s: RandomMovieModel, index: number) => {
-                return new Messenger(`messenger-${index}`, [s.title])
+                return new Messenger(`messenger-${index}`, [s.movie.title])
             })
         }
     }
@@ -82,7 +82,10 @@ class Movies extends React.Component<MoviesProps, MoviesState> {
                             </Dropdown>
                         </Form.Field>
                     </div>
-                    <Button disabled={title.trim() === '' || genre === ''} type="submit" basic onClick={() => { this.props.enterMovie({ title: title, genre: genre }); this.setState({ title: '', genre: '' }) }}>Submit Movie</Button>
+                    <Button disabled={title.trim() === '' || genre === ''} type="submit" basic onClick={() => {
+                        // this.props.enterMovie({ title: title, genre: genre });
+                        this.setState({ title: '', genre: '' })
+                    }}>Submit Movie</Button>
                 </Form>
                 <div className="flex-row random-movie">
                     <Button onClick={() => { this.setState({ openModal: 1 }) }} type="button" basic>Get Random {randomCount === 1 ? 'Movie' : 'Movies'}</Button>
@@ -115,7 +118,7 @@ class Movies extends React.Component<MoviesProps, MoviesState> {
                     {
                         selectedMovies.map((s: RandomMovieModel, index: number) => {
                             return (
-                                <div key={s.title} className="messenger" id={`messenger-${index}`}></div>
+                                <div key={s.movie.title} className="messenger" id={`messenger-${index}`}></div>
                             )
                         })
                     }
