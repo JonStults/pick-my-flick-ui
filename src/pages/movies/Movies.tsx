@@ -10,9 +10,10 @@ import { logout } from '../../store/auth/actionCreators';
 import { RootState } from '../../store/rootState';
 import { MovieMetaData, RandomMovieModel, SearchResults } from '../../store/movies/types';
 import './Movies.scss';
-import { POSTER_PATH_URL } from '../../store/Constants';
+import { POSTER_PATH_URL, ROUTES, TOKEN } from '../../store/Constants';
 import { formatYYYY } from '../../utils';
 import { Popcorn } from '../../Images';
+import { Redirect } from 'react-router';
 
 interface MoviesProps {
     genres: string[];
@@ -24,6 +25,7 @@ interface MoviesProps {
     total_pages: number;
     loading: boolean;
     searching: boolean;
+    authenticated: boolean;
     getMovies: () => void;
     resetMessage: () => void;
     resetSelected: () => void;
@@ -47,6 +49,7 @@ interface MoviesState {
     pageNumber: number;
     refSet: boolean;
     selectedMovie: SearchResults;
+    isAuthenticated: boolean;
 }
 
 class Movies extends React.Component<MoviesProps, MoviesState> {
@@ -62,11 +65,16 @@ class Movies extends React.Component<MoviesProps, MoviesState> {
             timeout: null,
             pageNumber: 1,
             refSet: false,
-            selectedMovie: {} as SearchResults
+            selectedMovie: {} as SearchResults,
+            isAuthenticated: true
         }
     }
 
     componentDidMount() {
+        const { authenticated } = this.props;
+        if (!authenticated || !localStorage.getItem(TOKEN)) {
+            this.setState({isAuthenticated: false})
+        }
         this.props.getMovies();
     }
 
@@ -138,7 +146,8 @@ class Movies extends React.Component<MoviesProps, MoviesState> {
 
     render() {
         const { selectedMovies, loading, surfaceMessage, userId, metaData, movie_list } = this.props;
-        const { title, genre, randomCount, enterModalStep, enterModalOpen, getMovieModalOpen, selectedMovie } = this.state;
+        const { title, genre, randomCount, enterModalStep, enterModalOpen, getMovieModalOpen, selectedMovie, isAuthenticated } = this.state;
+        if (!isAuthenticated) return <Redirect to={ROUTES.LOGIN} />
         return (
             <div className="flex-column home-container">
                 <div className="header">
@@ -262,7 +271,8 @@ const mapStateToProps = (state: RootState) => {
         movie_list: state.MoviesState.searchResults,
         total_pages: state.MoviesState.totalPages,
         loading: state.MoviesState.loading,
-        searching: state.MoviesState.searching
+        searching: state.MoviesState.searching,
+        authenticated: state.AuthState.user.isAuthenticated
     }
 }
 

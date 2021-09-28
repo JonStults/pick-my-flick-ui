@@ -2,7 +2,6 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { Route, Redirect, RouteProps } from 'react-router';
 import { User } from './store/auth/types';
-import { bindActionCreators } from 'redux';
 import { ROUTES, TOKEN } from './store/Constants';
 import { RootState } from './store/rootState';
 
@@ -11,17 +10,6 @@ export interface ProtectedRouteProps extends RouteProps {
 }
 
 export class ProtectedRoute extends Route<ProtectedRouteProps> {
-    componentDidMount() {
-        // console.log('---')
-        // console.log(this.props)
-        // console.log('---')
-    }
-
-    componentDidUpdate(prevProps: Readonly<ProtectedRouteProps>) {
-        // if (prevProps.path !== this.props.path) {
-        // }
-    }
-
     render() {
         let redirectPath: string = '';
         if (this.props.user.isAuthenticated === null) {
@@ -40,17 +28,11 @@ export class ProtectedRoute extends Route<ProtectedRouteProps> {
     }
 }
 
-const mapDispatchToProps = (dispatch: any) => {
-    return bindActionCreators({
-    }, dispatch)
-}
-
 
 const mapStateToProps = (state: RootState) => {
-    const { user } = state.AuthState;
     return {
-        user
+        user: state.AuthState.user
     }
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(ProtectedRoute);
+export default connect(mapStateToProps)(ProtectedRoute);

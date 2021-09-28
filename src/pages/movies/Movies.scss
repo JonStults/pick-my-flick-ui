@@ -11,14 +11,27 @@
     padding: 0 20px;
 
     svg {
-        height: 50px;
-        width: 50px;
+        height: 4vw;
+        width: 4vw;
         margin-right: 20px;
     }
 
     .header-text {
-        font-size: 48px;
+        font-size: 4vw;
         font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+    }
+
+}
+
+@media screen and (min-width: 850px) {
+    .log {
+        font-size: 2vw !important;
+    }
+}
+
+@media screen and (max-width: 849px) {
+    .log {
+        font-size: 4vw !important;
     }
 }
 
@@ -152,37 +165,10 @@
     border-radius: 15px;
 }
 
-.modal-1 {
-    &.move-center {
-        transform: translateX(calc(-50vw - 100px));
-    }
-    &.move-left {
-        transform: translateX(calc(-100vw - 300px));
-    }
-}
-
-.modal-2 {
-    &.move-center {
-        transform: translateX(calc(-50vw - 100px));
-    }
-    &.move-left {
-        transform: translateX(calc(-100vw - 300px));
-    }
-}
-
-.modal-3 {
-    &.move-center {
-        transform: translateX(calc(-50vw - 100px));
-    }
-    &.move-left {
-        transform: translateX(calc(-100vw - 300px));
-    }
-}
-
 .enter-movie-modal {
     height: 40vh !important;
     width: 55vh !important;
-    max-width: 98vw;
+    max-width: 75vw;
 }
 
 .movie-info {
