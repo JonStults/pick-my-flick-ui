@@ -219,7 +219,7 @@ class Movies extends React.Component<MoviesProps, MoviesState> {
                                                 <div className="movie-info">
                                                     {/* <div key={s.title} className="messenger" id={`messenger-${index}`}></div> */}
                                                     <img className="movie-poster" src={POSTER_PATH_URL + s.movie.poster_path} alt="movie_poster" />
-                                                    <div className="text">
+                                                    <div className="text flex-grow">
                                                         <div className="title-container">
                                                             <div className="title">{s.movie.title}</div>
                                                             <div className="sub-title">{formatYYYY(s.movie.release_date)}</div>
