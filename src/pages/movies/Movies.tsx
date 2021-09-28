@@ -6,12 +6,13 @@ import {
     getMovies, enterMovie, createUserFlick, updateMovieWatched,
     getRandomMovie, resetMessage, resetSelected, searchMovies, resetSearch
 } from '../../store/movies/actionCreators';
+import { logout } from '../../store/auth/actionCreators';
 import { RootState } from '../../store/rootState';
 import { MovieMetaData, RandomMovieModel, SearchResults } from '../../store/movies/types';
-import { Messenger } from './Messenger';
 import './Movies.scss';
-import { GENRES, POSTER_PATH_URL } from '../../store/Constants';
+import { POSTER_PATH_URL } from '../../store/Constants';
 import { formatYYYY } from '../../utils';
+import { Popcorn } from '../../Images';
 
 interface MoviesProps {
     genres: string[];
@@ -22,6 +23,7 @@ interface MoviesProps {
     movie_list: SearchResults[];
     total_pages: number;
     loading: boolean;
+    searching: boolean;
     getMovies: () => void;
     resetMessage: () => void;
     resetSelected: () => void;
@@ -31,18 +33,16 @@ interface MoviesProps {
     searchMovies: (title: string, page: number) => void;
     updateMovieWatched: (movieId: number, watched: boolean) => void;
     resetSearch: () => void;
+    logout: () => void;
 }
 
 interface MoviesState {
     title: string,
     genre: string,
     randomCount: number;
-    openModal: number;
-    closedModals: number[];
     enterModalOpen: boolean;
     getMovieModalOpen: boolean;
     enterModalStep: number;
-    getModalStep: number;
     timeout: any;
     pageNumber: number;
     refSet: boolean;
@@ -56,12 +56,9 @@ class Movies extends React.Component<MoviesProps, MoviesState> {
             title: '',
             genre: '',
             randomCount: 1,
-            openModal: 0,
-            closedModals: [],
             enterModalOpen: false,
             getMovieModalOpen: false,
             enterModalStep: 1,
-            getModalStep: 1,
             timeout: null,
             pageNumber: 1,
             refSet: false,
@@ -73,8 +70,16 @@ class Movies extends React.Component<MoviesProps, MoviesState> {
         this.props.getMovies();
     }
 
-    componentDidUpdate(prevProps: Readonly<MoviesProps>) {
-        const { selectedMovies } = this.props;
+    componentWillUnmount() {
+        this.removeEventListener();
+    }
+
+    logout = () => {
+        this.removeEventListener();
+        this.props.logout();
+    }
+
+    addEventListener = () => {
         const { refSet } = this.state;
         let dropdown = document.getElementsByClassName('search-dropdown')[0];
         if (dropdown && !refSet) {
@@ -82,17 +87,14 @@ class Movies extends React.Component<MoviesProps, MoviesState> {
             menu.addEventListener('scroll', this.handleScroll);
             this.setState({ refSet: true });
         }
-        // if (prevProps.selectedMovies !== selectedMovies) {
-        //     selectedMovies.forEach((s: RandomMovieModel, index: number) => {
-        //         return new Messenger(`messenger-${index}`, [s.movie.title])
-        //     })
-        // }
     }
 
-    componentWillUnmount() {
+    removeEventListener = () => {
         let dropdown = document.getElementsByClassName('search-dropdown')[0];
-        let menu = dropdown.children[3];
-        menu.removeEventListener('scroll', this.handleScroll);
+        if (dropdown) {
+            let menu = dropdown.children[3];
+            menu.removeEventListener('scroll', () => null);
+        }
     }
 
     handleKeyDown(e: React.KeyboardEvent) {
@@ -119,10 +121,10 @@ class Movies extends React.Component<MoviesProps, MoviesState> {
     }
 
     handleScroll = (e: any) => {
-        const { total_pages } = this.props;
+        const { total_pages, searching } = this.props;
         const { pageNumber, title } = this.state;
         let target = e.currentTarget;
-        if (Math.ceil(target.scrollTop) >= (target.scrollHeight - target.clientHeight) && total_pages !== pageNumber) {
+        if (Math.ceil(target.scrollTop) >= (target.scrollHeight - target.clientHeight) && total_pages !== pageNumber && !searching) {
             this.props.searchMovies(title, this.state.pageNumber + 1);
             this.setState({ pageNumber: this.state.pageNumber + 1 })
         }
@@ -136,9 +138,15 @@ class Movies extends React.Component<MoviesProps, MoviesState> {
 
     render() {
         const { selectedMovies, loading, surfaceMessage, userId, metaData, movie_list } = this.props;
-        const { title, genre, randomCount, openModal, closedModals, enterModalStep, getModalStep, enterModalOpen, getMovieModalOpen, selectedMovie } = this.state;
+        const { title, genre, randomCount, enterModalStep, enterModalOpen, getMovieModalOpen, selectedMovie } = this.state;
         return (
             <div className="flex-column home-container">
+                <div className="header">
+                    <Popcorn />
+                    <div className="header-text">Pick My Flick</div>
+                    <span className="flex-grow"></span>
+                    <Button onClick={this.logout} className="button-stripped"><Icon name="log out" size="big" /></Button>
+                </div>
                 <Modal className="enter-movie-modal" open={enterModalOpen}>
                     <div className="modal-content">
                         <Icon className="close-icon" name="close" onClick={() => { this.setState({ enterModalOpen: false, enterModalStep: 1, selectedMovie: {} as SearchResults }); this.props.resetSearch() }} />
@@ -147,10 +155,11 @@ class Movies extends React.Component<MoviesProps, MoviesState> {
                                 enterModalStep === 1 &&
                                 <div className="form-content">
                                     <Form.Field>
-                                        {/* <Input className="add-movie-input" placeholder="Enter Movie" value={title} onChange={(e: any) => this.setState({ title: e.target.value })} /> */}
                                         <Dropdown
                                             placeholder="Search Movie"
                                             fluid
+                                            onBlur={this.removeEventListener}
+                                            onClick={this.addEventListener}
                                             onChange={this.handleClick}
                                             search className="search-dropdown"
                                             onSearchChange={(e: any) => this.handleTimeout(e.target.value)}
@@ -186,7 +195,6 @@ class Movies extends React.Component<MoviesProps, MoviesState> {
                             {
                                 enterModalStep === 3 &&
                                 <Button disabled={title.trim() === '' || genre === ''} type="submit" basic onClick={() => {
-                                    // this.props.enterMovie({ title: title, genre: genre });
                                     this.setState({ title: '', genre: '' })
                                 }}>Submit Movie</Button>
                             }
@@ -198,26 +206,11 @@ class Movies extends React.Component<MoviesProps, MoviesState> {
                         {
                             loading ? <Dimmer active inverted><Loader active>Loading</Loader></Dimmer> :
                                 <>
-                                    <Icon className="close-icon" name="close" onClick={() => this.setState({ getMovieModalOpen: false, getModalStep: 1 })} />
+                                    <Icon className="close-icon" name="close" onClick={() => this.setState({ getMovieModalOpen: false })} />
                                     {
-                                        getModalStep === 1 &&
-                                        <div className="form-content-two">
-                                            How many?
-                                            <Button onClick={() => this.setState({ randomCount: 1, getModalStep: 2 })}>1</Button>
-                                            <Button onClick={() => this.setState({ randomCount: 3, getModalStep: 2 })}>3</Button>
-                                            <Button onClick={() => this.setState({ randomCount: 5, getModalStep: 2 })}>5</Button>
-                                        </div>
-                                    }
-                                    {
-                                        getModalStep === 2 &&
-                                        <Button onClick={() => { this.setState({ getModalStep: 3 }); this.props.getRandomMovie(randomCount) }}>Get Movie(s)</Button>
-                                    }
-                                    {
-                                        getModalStep === 3 &&
-                                        selectedMovies.map((s: RandomMovieModel, index: number) => {
+                                        selectedMovies.map((s: RandomMovieModel) => {
                                             return (
                                                 <div className="movie-info">
-                                                    {/* <div key={s.title} className="messenger" id={`messenger-${index}`}></div> */}
                                                     <img className="movie-poster" src={POSTER_PATH_URL + s.movie.poster_path} alt="movie_poster" />
                                                     <div className="text flex-grow">
                                                         <div className="title-container">
@@ -248,10 +241,12 @@ class Movies extends React.Component<MoviesProps, MoviesState> {
                     <Button onClick={this.props.resetMessage}>No</Button>
                     <Button onClick={() => this.props.createUserFlick(userId, metaData ? metaData.movieId : -1)}>Yes</Button>
                 </Modal>
-                <div className="flex-row random-movie">
-                    <Button onClick={() => { this.setState({ enterModalOpen: true }) }} type="button" basic>Add Movie</Button>
-                    <Button onClick={() => { this.setState({ getMovieModalOpen: true }) }} type="button" basic>Get Random {randomCount === 1 ? 'Movie' : 'Movies'}</Button>
+                <div className="flex-column random-movie">
+                    <div><Button className="button-stripped add-button" onClick={() => { this.setState({ enterModalOpen: true }) }} type="button"><Icon color="green" size="big" name="add circle" /> Add Movie</Button></div>
+                    <br />
+                    <div><Button className="button-stripped add-button" onClick={() => { this.setState({ getMovieModalOpen: true }); this.props.getRandomMovie(1) }} type="button"><Icon color="green" size="big" name="add circle" /> Get Random {randomCount === 1 ? 'Movie' : 'Movies'}</Button></div>
                 </div>
+                <div className="attribution">Icons made by <a href="https://www.freepik.com" title="Freepik">Freepik</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a></div>
             </div>
         )
     }
@@ -266,14 +261,15 @@ const mapStateToProps = (state: RootState) => {
         userId: state.AuthState.user.id,
         movie_list: state.MoviesState.searchResults,
         total_pages: state.MoviesState.totalPages,
-        loading: state.MoviesState.loading
+        loading: state.MoviesState.loading,
+        searching: state.MoviesState.searching
     }
 }
 
 const mapDispatchToProps = (dispatch: any) => {
     return bindActionCreators({
         getMovies, enterMovie, getRandomMovie, resetMessage, resetSearch,
-        createUserFlick, resetSelected, searchMovies, updateMovieWatched
+        createUserFlick, resetSelected, searchMovies, updateMovieWatched, logout
     }, dispatch)
 }
 

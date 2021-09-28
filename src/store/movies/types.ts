@@ -9,6 +9,7 @@ export interface MoviesState {
     searchResults: SearchResults[];
     totalPages: number;
     loading: boolean;
+    searching: boolean;
 }
 
 export interface MoviesResponseModel {

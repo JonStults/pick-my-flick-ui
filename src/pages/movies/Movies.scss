@@ -1,3 +1,33 @@
+.header {
+    height: 100px;
+    width: 100%;
+    background-color: #f4f4f4;
+    border-color: transparent;
+    box-shadow: 0 0 10px #a0a0a0;
+    position: absolute;
+    top: 0;
+    display: flex;
+    align-items: center;
+    padding: 0 20px;
+
+    svg {
+        height: 50px;
+        width: 50px;
+        margin-right: 20px;
+    }
+
+    .header-text {
+        font-size: 48px;
+        font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+    }
+}
+
+.attribution {
+    position: absolute;
+    bottom: 2px;
+    right: 2px;
+}
+
 .submit-movie-form {
     height: 100%;
     align-items: center;
@@ -39,7 +69,7 @@
 .home-container {
     height: 100vh;
     align-items: center;
-    padding-top: 33vh;
+    justify-content: center;
     .field {
         height: 38px;
         .dropdown {
@@ -226,5 +256,20 @@
 .search-dropdown {
     .divider {
         margin-left: 12px;
+    }
+}
+
+.add-button {
+    width: auto !important;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    font-size: 18px !important;
+
+    i {
+        height: 100%;
+        display: inline-flex;
+        align-items: center;
+        padding-bottom: 2px;
     }
 }

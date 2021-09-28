@@ -11,7 +11,8 @@ const initialState: MoviesState = {
     surfaceMessage: null,
     metaData: null,
     totalPages: 0,
-    loading: false
+    loading: false,
+    searching: false
 }
 
 export function moviesReducer(state = initialState, action: movieActionTypes): MoviesState {
@@ -27,13 +28,19 @@ export function moviesReducer(state = initialState, action: movieActionTypes): M
                 surfaceMessage: action.payload.ok ? state.surfaceMessage : action.payload.message,
                 loading: false
             };
+        case constants.SEARCH_MOVIES:
+            return {
+                ...state,
+                searching: true
+            }
         case constants.SEARCH_MOVIES_SUCCESS:
             return {
                 ...state,
                 surfaceMessage: action.payload.ok ? state.surfaceMessage : action.payload.message,
                 metaData: action.payload.ok ? state.metaData : action.payload.metaData,
                 searchResults: state.searchResults.concat(action.payload.searchResults),
-                totalPages: action.payload.total_pages
+                totalPages: action.payload.total_pages,
+                searching: false
             };
         case constants.GET_MOVIES_SUCCESS:
             return {

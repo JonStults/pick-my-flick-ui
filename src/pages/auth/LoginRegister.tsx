@@ -55,7 +55,7 @@ class LoginRegister extends React.Component<LoginRegisterProps, LoginRegisterSta
     changeForm() {
         const { register } = this.state;
 
-        this.setState({ register: !register });
+        this.setState({ register: !register, username: '', password: '', confirm_password: '' });
         this.props.resetError()
     }
     render() {
